@@ -143,6 +143,7 @@
     <ClInclude Include="OpenGLDraw.h" />
     <ClInclude Include="OpenGLLoader.h" />
     <ClInclude Include="GLSLShaderLoader.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>

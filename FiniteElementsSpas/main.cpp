@@ -6,6 +6,7 @@
 #include "OpenGLDraw.h"
 #include "Input.h"
 #include "GLSLShaderLoader.h"
+#include "Particle.h"
 
 
 int main(int argc, char** argv)
@@ -14,25 +15,38 @@ int main(int argc, char** argv)
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+
 	GLFWwindow* window = glfwCreateWindow(800, 600, extract_version(argv[0]), nullptr, nullptr);
+
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSetWindowCloseCallback(window, glfw_window_close_callback);
 	glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
+
 	const char* vertshader =
-		"#version 450 core                                                  \n"
-		"layout(location = 0) in vec3 vertexPosition_modelspace;            \n"
-		//"uniform mat4 modelmatrix;                                          \n"
-		"void main(){                                                       \n"
-		//"  gl_Position = modelmatrix * vec4(vertexPosition_modelspace, 1.0);\n"
-		"  gl_Position = vec4(vertexPosition_modelspace, 1.0);\n"
+		"#version 450 core                                                        \n"
+		"layout(location = 0) in vec3 vertexPosition_modelspace;                  \n"
+		"out vec4 ParticleColor;                                                  \n"
+		"uniform mat4 projection;                                                 \n"
+		"uniform vec2 offset;                                                     \n"
+		"uniform vec4 color;                                                      \n"
+		//"uniform mat4 modelmatrix;                                              \n"
+		"void main(){                                                             \n"
+		//"gl_Position = modelmatrix * vec4(vertexPosition_modelspace, 1.0);      \n"
+		"float scale = 10.0f;                                                     \n"
+		"TexCoords = vertexPosition_modelspace.zw;                                \n"
+		"gl_Position = projection * vec4((vertex.xy * scale) + offset, 0.0, 1.0); \n"
+		"ParticleColor = color;                                                   \n"
+		"gl_Position = vec4(vertexPosition_modelspace, 1.0);                      \n"
 		"}";
 	const char* fragshader =
-		"#version 450 core   \n"
-		"out vec3 color;     \n"
-		"uniform vec3 ucolor = vec3(.2,.5,.5);\n"
-		"void main() {       \n"
-		"  color = ucolor;   \n"
+		"#version 450 core                                     \n"
+		"in vec4 ParticleColor;                                \n"
+		"out vec3 color;                                       \n"
+		"uniform vec3 ucolor = vec3(.2,.5,.5);                 \n"
+		"void main() {                                         \n"
+		//"color = ucolor;                                     \n"
+		"color = (texture(sprite, TexCoords) * ParticleColor); \n"
 		"}";
 	unsigned int mainShader = LoadShader(vertshader, fragshader);
 	glClearColor(.2f, .2f, .6f, 0.f);

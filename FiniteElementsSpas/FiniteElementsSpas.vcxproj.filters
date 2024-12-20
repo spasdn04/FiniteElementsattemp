@@ -50,5 +50,8 @@
     <ClInclude Include="GLSLShaderLoader.h">
       <Filter>Archivos de origen\rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
